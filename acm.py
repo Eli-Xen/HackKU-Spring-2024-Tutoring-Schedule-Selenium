@@ -42,6 +42,7 @@ class ACM:
                     int(cols[j].text[0])
                     #makes a list with time, days of the week, and names/blank spaces
                     temp_list = [cols[j].text, "M", cols[j+1].text, "T", cols[j+2].text, "W", cols[j+3].text, "R", cols[j+4].text, "F", cols[j+5].text]
+                    temp_list[0] = self.convert24(temp_list[0])
                     for k in range(1, len(temp_list)):
                         #if a day of the week, or if it's an empty str, do nothing
                         if  len(temp_list[k]) <= 1:
@@ -53,6 +54,19 @@ class ACM:
                 except:
                     pass
         return self.options_list
+
+    def convert24(self, time):
+        if time[-2] == "A":
+            pass
+        else:
+            temp = time[0:time.find(":")]
+            temp = int(temp)
+            if temp == 12:
+                pass
+            else:
+                temp += 12
+                time = str(temp) + time[time.find(":"):-1]
+        return time[0:-2]
 
     def close(self):
         self.driver.close()
