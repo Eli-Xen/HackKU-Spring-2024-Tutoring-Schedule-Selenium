@@ -18,22 +18,36 @@ class ALC:
         self.driver=webdriver.Chrome() #ask for input of which browser, for now just chrome 
         self.openALC()
         self.login()
+        time.sleep(30)
 
+    '''waits for elements to appear'''
+    def wait(self,time,types,string): 
+        time=int(time)
+        string=string.strip() 
+        if types=="ID": 
+            types=By.ID
+        elif types=="class": 
+            types=By.CLASS_NAME
+        elif types=="link": 
+            types=By.PARTIAL_LINK_TEXT
+        WebDriverWait(self.driver,time).until(EC.presence_of_all_elements_located((types,string)))
         
     '''opens ALC website and clicks schedule an appointmnet button'''
     def openALC(self): 
         self.driver.get("https://learningandwriting.ku.edu/individual-tutoring")
-        WebDriverWait(self.driver,5).until(EC.presence_of_all_elements_located((By.ID,"section342")))  
+        self.wait(5,"ID","section342")
+        #WebDriverWait(self.driver,5).until(EC.presence_of_all_elements_located((By.ID,"section342")))  
         scheduleAppointmentButton=self.driver.find_element(By.ID,"section342") 
         scheduleAppointmentButton.click() 
-        time.sleep(30)
-    
+        
+    '''logs into ALC tutoring'''
     def login(self): 
         #_username=input("KU username: ")
         #_password=input("KU password: ")
         #username.strip() 
         #password.strip() 
-        WebDriverWait(self.driver,5).until(EC.presence_of_all_elements_located((By.ID,"username")))  
+        #WebDriverWait(self.driver,5).until(EC.presence_of_all_elements_located((By.ID,"username")))  
+        self.wait(5,"ID","username")
         _enterUser=self.driver.find_element(By.ID,"username")
         _enterUser.send_keys("e602m203")
         _pass=self.driver.find_element(By.ID,"password")
