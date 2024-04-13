@@ -83,6 +83,7 @@ class Schedule:
             temp[1] = self.convert24(temp[1].strip())
             self.schedule_list[i].times = temp[0].strip() + " - " + temp[1].strip()
             
+            
     def convert24(self, time):
         #converts to military time so it's possible to compare schedules easier
         if time[-2].upper() == "A":

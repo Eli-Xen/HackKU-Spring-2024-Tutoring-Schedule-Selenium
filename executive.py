@@ -36,7 +36,7 @@ class Executive:
                 self.acm_dict[i] = self.comparison(mySchedule.schedule_list, myACM.options_list)
             except:
                 myACM.close()
-                print(f"ACM Tutoring doesn't offer tutoring for {i}") 
+                print(f"ACM Tutoring doesn't offer tutoring for {i} :(") 
         #run alc for each class
         self.pretty_print()   
 
@@ -67,7 +67,7 @@ class Executive:
         return valid_list
 
     def pretty_print(self):
-        print("Dates/times for ACM Tutoring:")
+        print("Dates/times for ACM Tutoring (held in LEEP2 1328):")
         for key, value in self.acm_dict.items():
             print(f'For {key}:')
             for i in range(0, len(value)):
