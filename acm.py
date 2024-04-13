@@ -15,7 +15,7 @@ class ACM:
     def set_up(self):
         #asks user which class they wanna look up
         #makes a firefox (best) webdriver
-        self.driver = webdriver.Chrome()
+        self.driver = webdriver.Firefox()
         #looks up website
         self.driver.get("https://kuacm.club/tutoring/")
 

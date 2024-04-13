@@ -33,17 +33,41 @@ class Executive:
             try:
                 myACM = ACM(i)
                 myACM.run()
-                self.acm_dict.add(i, self.comparison(mySchedule.schedule_list, myACM.options_list))
+                self.acm_dict[i] = self.comparison(mySchedule.schedule_list, myACM.options_list)
             except:
                 myACM.close()
                 print(f"ACM Tutoring doesn't offer tutoring for {i}") 
         #run alc for each class
-                
-        
+        for key, value in self.acm_dict.items():
+            print(f'{key}, {value}')    
 
     def comparison(self, schedule_list, tutoring_list):
         #returns a list with all valid times
-        pass
+        valid_list = []
+        #iterate through tutoring_list
+        for i in tutoring_list:
+            tutoring_time = int(i.times[0:i.times.find(":")] + i.times[i.times.find(":")+1:])
+            counter = 0
+        #do a counter?
+        #if time is invalid (make sure days match), break
+            while counter == 0:
+                for j in schedule_list:
+                    if i.weekday == j.weekday:
+                        class_times = j.times.split("-")
+                        for k in range(0, len(class_times)):
+                            class_times[k] = int(class_times[k][0:class_times[k].find(":")] + class_times[k][class_times[k].find(":")+1:])
+                        if class_times[1] > tutoring_time and class_times[0] <= tutoring_time:
+                            counter += 1
+                            break
+                break
+            if counter == 0:
+                if [i.weekday, i.times] not in valid_list:
+                    valid_list.append([i.weekday, i.times])
+        #else keep iterating through
+        #if time was never marked invalid, add it to the list
+        return valid_list
+                    
+        
 
 
 def main():

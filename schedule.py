@@ -19,7 +19,7 @@ class Schedule:
 
     def set_up(self):
         #makes a chrome webdriver
-        self.driver = webdriver.Chrome()
+        self.driver = webdriver.Firefox()
         #looks up website
         self.driver.get("https://my.ku.edu/uPortal/f/welcome/normal/render.uP")
 
