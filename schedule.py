@@ -73,7 +73,6 @@ class Schedule:
             cols[4] = cols[4].text.split(",")
             for j in range(0, len(cols[4])):
                 self.schedule_list.append(Option(cols[4][j].strip(), cols[2].text))
-                
         for i in range(len(self.schedule_list)-1, -1, -1):
             if self.schedule_list[i].weekday == "":
                 self.schedule_list.pop(i) 

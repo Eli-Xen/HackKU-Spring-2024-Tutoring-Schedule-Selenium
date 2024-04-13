@@ -25,7 +25,7 @@ class Executive:
 
     def run(self):
         self.password_manager()
-        temp = input("What classes do you need tutoring for? Input in format EECS 140,EECS 268,PHXS 212: ")
+        temp = input("What classes do you need tutoring for?\nInput in format EECS 140,EECS 268,PHXS 212 starting with highest priority: ")
         self.classes_list = temp.split(",")
         mySchedule = Schedule(self.user_id, self.user_pass)
         mySchedule.run()
@@ -38,8 +38,7 @@ class Executive:
                 myACM.close()
                 print(f"ACM Tutoring doesn't offer tutoring for {i}") 
         #run alc for each class
-        for key, value in self.acm_dict.items():
-            print(f'{key}, {value}')    
+        self.pretty_print()   
 
     def comparison(self, schedule_list, tutoring_list):
         #returns a list with all valid times
@@ -66,10 +65,22 @@ class Executive:
         #else keep iterating through
         #if time was never marked invalid, add it to the list
         return valid_list
-                    
-        
 
-
+    def pretty_print(self):
+        print("Dates/times for ACM Tutoring:")
+        for key, value in self.acm_dict.items():
+            print(f'For {key}:')
+            for i in range(0, len(value)):
+                if value[i][0] == 'M':
+                    print(f'Mondays at {value[i][1]}')
+                if value[i][0] == 'T':
+                    print(f'Tuesdays at {value[i][1]}')
+                if value[i][0] == 'W':
+                    print(f'Wednesdays at {value[i][1]}')
+                if value[i][0] == 'R':
+                    print(f'Thursdays at {value[i][1]}')
+                if value[i][0] == 'F':
+                    print(f'Fridays at {value[i][1]}')
 def main():
     myExec = Executive()
     myExec.run()
