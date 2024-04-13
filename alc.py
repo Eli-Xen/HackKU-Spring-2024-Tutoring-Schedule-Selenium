@@ -12,13 +12,15 @@ from selenium.webdriver.support import expected_conditions as EC
 import time 
 
 class ALC: 
-    def __init__(self,studentSchedule=None): 
+    def __init__(self,helpClass=None,studentSchedule=None): 
         self.studentSchedule={}
         self.ALCtimes={} #dictionary f classes to keep day,
+        self.help=helpClass #must by tuple/list/dictionary of EECS,# string, format to be with space 
         self.driver=webdriver.Chrome() #ask for input of which browser, for now just chrome 
         self.openALC()
         self.login()
         self.duo()
+        self.selectClass()
         time.sleep(30)
 
     '''waits for elements to appear'''
@@ -54,9 +56,16 @@ class ALC:
         _pass=self.driver.find_element(By.ID,"password")
         _pass.send_keys("EliXen!1"+Keys.ENTER)
         
-    '''DUO dont trust computer'''
+    '''clicks "dont trust computer" button on DUO to avoid security issues'''
     def duo(self): 
         self.wait(30,"ID","dont-trust-browser-button")
         self.driver.find_element(By.ID,"dont-trust-browser-button").click()
     
+    '''iterates through every row tr and looks for araia-label="Open/Available..." and selects it'''
+    def selectClass(self): 
+        self.wait(10,"ID","limfoc")
+        #classInput=self.driver.find_element(By.ID,"limfoc") #instead of EECS 268 or whatever put self.help
+        #classInput.send_keys("EECS 168"+Keys.ENTER)
+        openSlot=self.driver.find_element(By.CLASS_NAME,"bg-white")
+        openSlot.click()
     
