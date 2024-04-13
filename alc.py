@@ -1,7 +1,7 @@
 '''
 Author: Eliza Malyshev 
 Date:4/13/2024 
-HackKU Spring 2024 Tutoring Porject; ALC Tutoring webscrapping 
+HackKU Spring 2024 Tutoring Project; ALC Tutoring webscrapping 
 Purpose: directs and gets information from ALC website 
 ''' 
 from selenium import webdriver 
@@ -15,9 +15,8 @@ import time
 from option import Option 
 
 class ALC: 
-    def __init__(self,helpClass=None,studentSchedule=None): 
-        self.studentSchedule={}
-        self.ALCtimes=[] #dlist of tutoring times
+    def __init__(self,helpClass,username,password): 
+        self.optionsList=[] #dlist of tutoring times
         self.help=helpClass #must by tuple/list/dictionary of EECS,# string, format to be with space 
         self.driver=webdriver.Chrome() #ask for input of which browser, for now just chrome 
         self.openALC()
@@ -74,40 +73,29 @@ class ALC:
         classInput=self.driver.find_element(By.ID,"limfoc") #instead of EECS 268 or whatever put self.help
         classInput.send_keys("EECS 168"+Keys.ENTER)
     
-    '''this actually clicks on the time slot, to reserve the appointmnet'''
+    def findTimes(self):
+        self.wait(7,"ID", "sch-table")
+        allTables=self.driver.find_elements(By.ID,"sch-table")
+        for i in allTables: #get it to iterate over all 6 tables 
+            #table = self.driver.find_element(By.ID, "sch-table")
+            ALCtimes = i.find_elements(By.TAG_NAME, "tr")
+            for row in ALCtimes:
+                cols = row.find_elements(By.TAG_NAME, "td")
+                for col in cols:
+                    tooltip_content = col.get_attribute('data-bs-original-title')
+                    if tooltip_content:
+                        # Extracting the desired information from the tooltip content
+                        appointment_info = tooltip_content.split('<strong>')
+                        time = appointment_info[1].split('</strong>')[0]
+                        date = appointment_info[2].split('</strong>')[0]
+                        person = appointment_info[3].split('</strong>')[0]
+            
+                        print(f"Time:{time}\tDate:{date}\tPerson:{person}")    
+    
+    '''this actually clicks on the time slot to reserve the appointmnet'''
+    '''called from executive only if any times match with the users schedule, let user select which appointment'''
     def timeSlot(self): 
         self.wait(10,"xpath",'//*[@aria-label="Open/Available Appointment Slot"]')
         openSlot = self.driver.find_element(By.CSS_SELECTOR, "td[aria-label='Open/Available Appointment Slot']") #goes into td and looks for aria label specified 
         ActionChains(self.driver).move_to_element(openSlot).click(openSlot).perform() #scrolls/moves to element and clicks it 
         
-    def findTimes(self):
-        self.wait(7,"ID", "sch-table")
-        '''table=self.driver.find_element(By.ID, "sch-table")
-        self.ALCtimes=table.find_elements(By.TAG_NAME, "tr") #saves it to table 
-        for i in self.ALCtimes:
-            cols = i.find_elements(By.TAG_NAME, "td") #finds columns in the table
-            for j in cols: 
-                if self.driver.find_element(By.CSS_SELECTOR, "td[aria-label='Open/Available Appointment Slot']"): 
-                    #print(self.driver.find_element(By.CSS_SELECTOR,"data-bs-original-title='Select to reserve <strong>2:00 pm</strong> on <strong>April 14</strong> with <strong>Annie</strong>.'").text)
-                    element = j.find_element(By.CSS_SELECTOR, '[data-bs-original-title]')
-                    tooltip_content = element.get_attribute('data-bs-original-title')
-                    print(tooltip_content)'''
-        table = self.driver.find_element(By.ID, "sch-table")
-        ALCtimes = table.find_elements(By.TAG_NAME, "tr")
-        
-        for row in ALCtimes:
-            cols = row.find_elements(By.TAG_NAME, "td")
-            for col in cols:
-                tooltip_content = col.get_attribute('data-bs-original-title')
-                if tooltip_content:
-                    # Extracting the desired information from the tooltip content
-                    appointment_info = tooltip_content.split('<strong>')
-                    time = appointment_info[1].split('</strong>')[0]
-                    date = appointment_info[2].split('</strong>')[0]
-                    person = appointment_info[3].split('</strong>')[0]
-        
-                    print("Time:", time)
-                    print("Date:", date)
-                    print("Person:", person)
-
-    
