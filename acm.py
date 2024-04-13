@@ -6,15 +6,14 @@ import time
 from option import Option
 
 class ACM:
-    def __init__(self):
+    def __init__(self, help_class):
         self.driver = " "
-        self.search_class = " "
         self.table_list = []
         self.options_list = []
+        self.help_class = help_class
 
     def set_up(self):
         #asks user which class they wanna look up
-        self.search_class = input("class: ")
         #makes a firefox (best) webdriver
         self.driver = webdriver.Firefox()
         #looks up website
@@ -27,7 +26,7 @@ class ACM:
         #selects the user inputted class in the dropdown menu
         #note- dropdown menu contains items like "PHSX 110/111". code won't work
         #for that
-        select.select_by_visible_text(self.search_class)
+        select.select_by_visible_text(self.help_class)
         #finds the schedule table and puts all the info into a list
         table = self.driver.find_element(By.ID, "schedule")
         self.table_list = table.find_elements(By.TAG_NAME, "tr")

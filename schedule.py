@@ -9,12 +9,13 @@ from option import Option
 from datetime import datetime
 
 class Schedule:
-    def __init__(self):
+    def __init__(self, user_id, user_pass):
         self.driver = " "
         self.schedule_list = []
         self.table_list = []
-        self.user_pass = ""
-        self.user_id = ""
+        self.user_pass = user_pass
+        self.user_id = user_id
+        
 
     def set_up(self):
         #makes a firefox (best) webdriver
@@ -38,14 +39,9 @@ class Schedule:
     def search_in_site(self):
         login_link = self.driver.find_element(By.ID, "portalCASLoginLink")
         login_link.click()
-        with open("pass.txt", "r") as file:
-            i = 0
-            for line in file:
-                i += 1
-                if i == 1:
-                    self.user_id = line.strip()
-                else:
-                    self.user_pass = line.strip()
+        #make this so that if the file exists, it reads the file
+        #else, it asks the user for input and then creates a pass_file so they don't have to multiple times
+        #this shouldgo in executive
         id_form = self.driver.find_element(By.ID, "username")
         id_form.send_keys(self.user_id)
         pass_form = self.driver.find_element(By.ID, "password")
@@ -55,8 +51,16 @@ class Schedule:
         #wait for website to load...
         time.sleep(5)
         self.driver.find_element(By.ID, "u23l1n230").click()
-        time.sleep(5)
-        table = self.driver.find_element(By.CLASS_NAME, "schedule")
+        time.sleep(10)
+        #need to reload page if it doesnt load
+        loaded = 0
+        while loaded != 1:
+            try:
+                table = self.driver.find_element(By.CLASS_NAME, "schedule")
+                loaded += 1
+            except:
+                self.driver.refresh()
+                time.sleep(10)
         self.table_list = table.find_elements(By.TAG_NAME, "tr")
 
 
@@ -81,6 +85,7 @@ class Schedule:
             self.schedule_list[i].times = temp[0].strip() + " - " + temp[1].strip()
             
     def convert24(self, time):
+        #converts to military time so it's possible to compare schedules easier
         if time[-2] == "A":
             pass
         else:
@@ -93,20 +98,14 @@ class Schedule:
                 time = str(temp) + time[time.find(":"):-1]
         return time[0:-2]
 
- 
-
     def close(self):
         self.driver.close()
         time.sleep(1)
 
-def main():
-    driver = Schedule()
-    driver.set_up()
-    driver.search_in_site()
-    driver.process_data()
-    for i in driver.schedule_list:
-        print(str(i))
-    driver.close()
+    def run(self):
+        self.set_up()
+        self.search_in_site()
+        self.process_data()
+        self.close()
+       
 
-if __name__ == "__main__":
-    main()
