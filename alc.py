@@ -9,9 +9,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys 
 from selenium.webdriver.support.ui import WebDriverWait 
 from selenium.webdriver.support import expected_conditions as EC 
-import time 
-
 from selenium.webdriver.common.action_chains import ActionChains
+import time 
 
 class ALC: 
     def __init__(self,helpClass=None,studentSchedule=None): 
@@ -22,7 +21,8 @@ class ALC:
         self.openALC()
         self.login()
         self.duo()
-        self.selectClass()
+        #self.selectClass()
+        self.timeSlot()
         time.sleep(30)
 
     '''waits for elements to appear'''
@@ -68,38 +68,14 @@ class ALC:
     '''iterates through every row tr and looks for araia-label="Open/Available..." and selects it'''
     def selectClass(self): 
         self.wait(10,"ID","limfoc")
-        self.wait(10,"xpath",'//*[@aria-label="Open/Available Appointment Slot"]')
-        #classInput=self.driver.find_element(By.ID,"limfoc") #instead of EECS 268 or whatever put self.help
-        #classInput.send_keys("EECS 168"+Keys.ENTER)
-        openSlot = self.driver.find_element(By.CSS_SELECTOR, '[href="#"]')
-        
-        # Find the element that triggers the tooltip
-        trigger_element = self.driver.find_element(By.CSS_SELECTOR, '[data-bs-toggle="tooltip"]')
-        
-        # Hover over the trigger element
-        ActionChains(self.driver).move_to_element(trigger_element).perform()
-        
-        # Wait for the tooltip to appear
-        tooltip_id = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, '[aria-describedby^="tooltip"]'))).get_attribute("aria-describedby")
-        
-        # Find the tooltip element using the tooltip ID
-        tooltip_element = self.driver.find_element(By.CSS_SELECTOR, f'#{tooltip_id}')
-        
-        # Interact with the tooltip element as needed
-        tooltip_element.click()
-        
-        
-        
-        print("click")
-        self.driver.execute_script("arguments[0].click();", tooltip_element)
-        
-        if openSlot.is_displayed():
-            print("Element is displayed")
-            # If visible, try to interact with the element
-            openSlot.click()
-        else:
-            print("scrolled")
-            self.driver.execute_script("arguments[0].scrollIntoView(true);", openSlot)
-        openSlot.click()
-            #this did not solve the problem getting Elementnot interactable exception 
+        classInput=self.driver.find_element(By.ID,"limfoc") #instead of EECS 268 or whatever put self.help
+        classInput.send_keys("EECS 168"+Keys.ENTER)
     
+    def timeSlot(self): 
+        self.wait(10,"xpath",'//*[@aria-label="Open/Available Appointment Slot"]')
+        openSlot = self.driver.find_element(By.CSS_SELECTOR, "td[aria-label='Open/Available Appointment Slot']") #goes into td and looks for aria label specified 
+        ActionChains(self.driver).move_to_element(openSlot).click(openSlot).perform() #scrolls/moves to element and clicks it 
+        
+        
+        
+        
