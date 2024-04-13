@@ -66,6 +66,11 @@ class ALC:
         self.wait(10,"ID","limfoc")
         #classInput=self.driver.find_element(By.ID,"limfoc") #instead of EECS 268 or whatever put self.help
         #classInput.send_keys("EECS 168"+Keys.ENTER)
-        openSlot=self.driver.find_element(By.CLASS_NAME,"bg-white")
-        openSlot.click()
+        openSlot=self.driver.find_element(By.XPATH,'//*[@aria-label="Open/Available Appointment Slot"]')
+        if openSlot.is_displayed():
+            # If visible, try to interact with the element
+            openSlot.click()
+        else:
+            print("Element is not visible.")
+        #openSlot.click()
     
