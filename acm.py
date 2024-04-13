@@ -15,7 +15,7 @@ class ACM:
     def set_up(self):
         #asks user which class they wanna look up
         #makes a firefox (best) webdriver
-        self.driver = webdriver.Firefox()
+        self.driver = webdriver.Chrome()
         #looks up website
         self.driver.get("https://kuacm.club/tutoring/")
 
@@ -26,7 +26,10 @@ class ACM:
         #selects the user inputted class in the dropdown menu
         #note- dropdown menu contains items like "PHSX 110/111". code won't work
         #for that
-        select.select_by_visible_text(self.help_class)
+        try:
+            select.select_by_visible_text(self.help_class)
+        except:
+            raise ValueError("ACM tutoring doesn't offer this class")
         #finds the schedule table and puts all the info into a list
         table = self.driver.find_element(By.ID, "schedule")
         self.table_list = table.find_elements(By.TAG_NAME, "tr")
@@ -55,7 +58,7 @@ class ACM:
         return self.options_list
 
     def convert24(self, time):
-        if time[-2] == "A":
+        if time[-2].upper() == "A":
             pass
         else:
             temp = time[0:time.find(":")]
@@ -71,23 +74,9 @@ class ACM:
         self.driver.close()
         time.sleep(1)
 
+    def run(self):
+        self.set_up()
+        self.search_in_site()
+        self.process_data()
+        self.close()
 
-#will modify... just for testing purposes.
-def main():
-    has_ran = 0
-    while has_ran != 1:
-        driver = ACM()
-        driver.set_up()
-        try:
-            driver.search_in_site()
-            has_ran += 1
-        except:
-            print("Class could not be found on ACM tutoring")
-            driver.close()
-    driver.process_data()
-    for i in driver.options_list:
-        print(i)
-    driver.close()
-
-if __name__ == "__main__":
-    main()

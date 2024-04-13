@@ -18,8 +18,8 @@ class Schedule:
         
 
     def set_up(self):
-        #makes a firefox (best) webdriver
-        self.driver = webdriver.Firefox()
+        #makes a chrome webdriver
+        self.driver = webdriver.Chrome()
         #looks up website
         self.driver.get("https://my.ku.edu/uPortal/f/welcome/normal/render.uP")
 
@@ -86,7 +86,7 @@ class Schedule:
             
     def convert24(self, time):
         #converts to military time so it's possible to compare schedules easier
-        if time[-2] == "A":
+        if time[-2].upper() == "A":
             pass
         else:
             temp = time[0:time.find(":")]

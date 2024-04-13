@@ -1,8 +1,10 @@
 from schedule import Schedule
+from acm import ACM
 class Executive:
     def __init__(self):
         self.classes_list = []
-        self.options_dict = {}
+        self.acm_dict = dict()
+        self.alc_dict = dict()
 
     def password_manager(self):
         i = 0
@@ -27,15 +29,22 @@ class Executive:
         self.classes_list = temp.split(",")
         mySchedule = Schedule(self.user_id, self.user_pass)
         mySchedule.run()
-        mySchedule.schedule_list
-        #run acm for each class
+        for i in self.classes_list:
+            try:
+                myACM = ACM(i)
+                myACM.run()
+                self.acm_dict.add(i, self.comparison(mySchedule.schedule_list, myACM.options_list))
+            except:
+                myACM.close()
+                print(f"ACM Tutoring doesn't offer tutoring for {i}") 
         #run alc for each class
-        #run comparison for each class
-        pass
+                
+        
 
-    def comparison(self, schedule_list, acm_list, alc_list):
+    def comparison(self, schedule_list, tutoring_list):
         #returns a list with all valid times
         pass
+
 
 def main():
     myExec = Executive()
