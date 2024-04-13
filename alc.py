@@ -33,6 +33,8 @@ class ALC:
             types=By.CLASS_NAME
         elif types=="link": 
             types=By.PARTIAL_LINK_TEXT
+        elif types=="xpath": 
+            types=By.XPATH
         WebDriverWait(self.driver,time).until(EC.presence_of_all_elements_located((types,string)))
         
     '''opens ALC website and clicks schedule an appointmnet button'''
@@ -64,14 +66,15 @@ class ALC:
     '''iterates through every row tr and looks for araia-label="Open/Available..." and selects it'''
     def selectClass(self): 
         self.wait(10,"ID","limfoc")
+        self.wait(10,"xpath",'//*[@aria-label="Open/Available Appointment Slot"]')
         #classInput=self.driver.find_element(By.ID,"limfoc") #instead of EECS 268 or whatever put self.help
         #classInput.send_keys("EECS 168"+Keys.ENTER)
-        openSlot=self.driver.find_element(By.XPATH,'//*[@aria-label="Open/Available Appointment Slot"]')
+        openSlot = self.driver.find_element(By.XPATH, "//*/text()[contains(., 'Select to reserve')]/parent::*")
         if openSlot.is_displayed():
             # If visible, try to interact with the element
             openSlot.click()
         else:
             self.driver.execute_script("arguments[0].scrollIntoView(true);", openSlot)
-            openSlot.click()
+        openSlot.click()
             #this did not solve the problem getting Elementnot interactable exception 
     
