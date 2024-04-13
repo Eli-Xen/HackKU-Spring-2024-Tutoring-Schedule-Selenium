@@ -71,6 +71,7 @@ class ALC:
             # If visible, try to interact with the element
             openSlot.click()
         else:
-            print("Element is not visible.")
-        #openSlot.click()
+            self.driver.execute_script("arguments[0].scrollIntoView(true);", openSlot)
+            openSlot.click()
+            #this did not solve the problem getting Elementnot interactable exception 
     
