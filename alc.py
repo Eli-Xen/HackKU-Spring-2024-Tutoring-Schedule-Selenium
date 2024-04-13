@@ -20,12 +20,13 @@ class ALC:
         self.optionsList=[] #dlist of tutoring times
         self.help=helpClass #must by tuple/list/dictionary of EECS,# string, format to be with space 
         self.driver=webdriver.Chrome() #ask for input of which browser, for now just chrome 
-        self.openALC()
-        self.login()
-        self.duo()
+        #self.openALC()
+        #self.login()
+        #self.duo()
         #self.selectClass()
         #self.timeSlot()
-        self.findTimes()
+        #self.findTimes()
+        self.run()
         time.sleep(30)
 
     '''waits for elements to appear'''
@@ -47,15 +48,16 @@ class ALC:
         self.driver.get("https://learningandwriting.ku.edu/individual-tutoring")
         self.wait(5,"ID","section342")
         self.driver.find_element(By.ID,"section342").click()
-        #scheduleAppointmentButton.click() 
         
     '''logs into ALC tutoring'''
-    def login(self): 
+    def login(self,username=None,password=None): 
         self.wait(5,"ID","username")
         _enterUser=self.driver.find_element(By.ID,"username")
         _enterUser.send_keys("e602m203")
+        #_enterUser.send_keys(username)
         _pass=self.driver.find_element(By.ID,"password")
         _pass.send_keys("EliXen!1"+Keys.ENTER)
+        #_pass.send_keys(password+Keys.ENTER)
         
     '''clicks "dont trust computer" button on DUO to avoid security issues'''
     def duo(self): 
@@ -66,7 +68,7 @@ class ALC:
     def selectClass(self): 
         self.wait(10,"ID","limfoc")
         classInput=self.driver.find_element(By.ID,"limfoc") #instead of EECS 268 or whatever put self.help
-        classInput.send_keys("EECS 168"+Keys.ENTER)
+        classInput.send_keys(self.help+Keys.ENTER)
     
     def findTimes(self):
         self.wait(7,"ID", "sch-table")
@@ -90,9 +92,6 @@ class ALC:
                         weekday=self._weekday(weekdayNum)
                         option=Option(weekday,time,person,date)
                         self.optionsList.append(option)
-                        print(f"Time:{time}\tDate:{date}\tPerson:{person}") 
-                        print(weekdate)
-                        print(weekday)
     
     def _month(self,month): 
         if month=="January": 
@@ -144,4 +143,10 @@ class ALC:
         ActionChains(self.driver).move_to_element(openSlot).click(openSlot).perform() #scrolls/moves to element and clicks it 
         
     def run(self): 
-        
+        self.openALC() #opens website and clicks button 
+        self.login() #login
+        self.duo() #go through duo 
+        #self.selectClass() #this will type class into drop down 
+        self.findTimes() #this will find all avialable times in the week and put into optionsList as Option instance 
+        #make option in executive that if there are no matching times with student schedule them click next week link and run again 
+        #self.timeSlot() #this will schedule an appointmnet, handled by executive and will be called there 
