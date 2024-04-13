@@ -9,6 +9,7 @@ class ACM:
     def __init__(self):
         self.driver = " "
         self.search_class = " "
+        self.table_list = []
         self.options_list = []
 
     def set_up(self):
@@ -22,18 +23,18 @@ class ACM:
         select.select_by_visible_text(self.search_class)
         self.driver.find_element(By.ID, "schedule")
         table = self.driver.find_element(By.ID, "schedule");
-        table_list = table.find_elements(By.TAG_NAME, "tr")
-        for i in table_list:
+        self.table_list = table.find_elements(By.TAG_NAME, "tr")
+        
+        
+    def process_data(self):
+        for i in self.table_list:
             cols = i.find_elements(By.TAG_NAME, "td")
             for j in range(0, len(cols)): 
-                #print(cols[j].text + "\t")
                 try:
-                    #this is buggy--- can you convert " " to int?
-                    print(cols[j].text[0])
                     int(cols[j].text[0])
                     temp_list = [cols[j].text, "M", cols[j+1].text, "T", cols[j+2].text, "W", cols[j+3].text, "H", cols[j+4].text, "F", cols[j+5].text]
-                    for k in range(0, len(temp_list)):
-                        if temp_list[k].isspace() or len(temp_list[k]) == 1:
+                    for k in range(1, len(temp_list)):
+                        if  len(temp_list[k]) <= 1:
                             pass
                         else:
                             self.options_list.append(Option(temp_list[k-1], temp_list[0], temp_list[k]))
@@ -42,11 +43,21 @@ class ACM:
 
     def close(self):
         self.driver.close()
+        time.sleep(1)
 
+#will delete... just for testing purposes.
 def main():
-    driver = ACM()
-    driver.set_up()
-    driver.search_in_site()
+    has_ran = 0
+    while has_ran != 1:
+        driver = ACM()
+        driver.set_up()
+        try:
+            driver.search_in_site()
+            has_ran += 1
+        except:
+            print("Class could not be found on ACM tutoring")
+            driver.close()
+    driver.process_data()
     for i in driver.options_list:
         print(i)
     driver.close()
