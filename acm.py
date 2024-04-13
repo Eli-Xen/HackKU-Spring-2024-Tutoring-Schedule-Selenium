@@ -29,8 +29,7 @@ class ACM:
         #for that
         select.select_by_visible_text(self.search_class)
         #finds the schedule table and puts all the info into a list
-        self.driver.find_element(By.ID, "schedule")
-        table = self.driver.find_element(By.ID, "schedule");
+        table = self.driver.find_element(By.ID, "schedule")
         self.table_list = table.find_elements(By.TAG_NAME, "tr")
         
     def process_data(self):
@@ -42,7 +41,7 @@ class ACM:
                     #if the value starts with a number (this would be times),
                     int(cols[j].text[0])
                     #makes a list with time, days of the week, and names/blank spaces
-                    temp_list = [cols[j].text, "M", cols[j+1].text, "T", cols[j+2].text, "W", cols[j+3].text, "H", cols[j+4].text, "F", cols[j+5].text]
+                    temp_list = [cols[j].text, "M", cols[j+1].text, "T", cols[j+2].text, "W", cols[j+3].text, "R", cols[j+4].text, "F", cols[j+5].text]
                     for k in range(1, len(temp_list)):
                         #if a day of the week, or if it's an empty str, do nothing
                         if  len(temp_list[k]) <= 1:
@@ -53,12 +52,14 @@ class ACM:
                             self.options_list.append(Option(temp_list[k-1], temp_list[0], temp_list[k]))
                 except:
                     pass
+        return self.options_list
 
     def close(self):
         self.driver.close()
         time.sleep(1)
 
-#will delete... just for testing purposes.
+
+#will modify... just for testing purposes.
 def main():
     has_ran = 0
     while has_ran != 1:
