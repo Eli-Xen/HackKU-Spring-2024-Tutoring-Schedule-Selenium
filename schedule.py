@@ -67,21 +67,32 @@ class Schedule:
             cols = self.table_list[i].find_elements(By.TAG_NAME, "td")
             #only need [2] and [4]- [2] is times, [4] is days
             cols[4] = cols[4].text.split(",")
-            cols[2] = cols[2].text.split("-")
-            cols[2][0] = self.convert24(cols[2][0].strip())
-            cols[2][1] = self.convert24(cols[2][1].strip())
-            cols[2] = cols[2][0] + " - " + cols[2][1]
             for j in range(0, len(cols[4])):
-                self.schedule_list.append(Option(cols[4][j].strip(), cols[2]))
+                self.schedule_list.append(Option(cols[4][j].strip(), cols[2].text))
+                
         for i in range(len(self.schedule_list)-1, -1, -1):
             if self.schedule_list[i].weekday == "":
                 self.schedule_list.pop(i) 
+        for i in range(len(self.schedule_list)):
+            temp = self.schedule_list[i].times
+            temp = temp.split("-")
+            temp[0] = self.convert24(temp[0].strip())
+            temp[1] = self.convert24(temp[1].strip())
+            self.schedule_list[i].times = temp[0].strip() + " - " + temp[1].strip()
             
     def convert24(self, time):
-        # Parse the time string into a datetime object
-        t = datetime.strptime(time, '%I:%M:%S %p')
-        # Format the datetime object into a 24-hour time string
-        return t.strftime('%H:%M:%S')[0:-2]
+        if time[-2] == "A":
+            pass
+        else:
+            temp = time[0:time.find(":")]
+            temp = int(temp)
+            if temp == 12:
+                pass
+            else:
+                temp += 12
+                time = str(temp) + time[time.find(":"):-1]
+        return time[0:-2]
+
  
 
     def close(self):
