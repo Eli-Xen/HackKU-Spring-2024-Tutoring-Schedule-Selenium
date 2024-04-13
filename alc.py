@@ -18,6 +18,7 @@ class ALC:
         self.driver=webdriver.Chrome() #ask for input of which browser, for now just chrome 
         self.openALC()
         self.login()
+        self.duo()
         time.sleep(30)
 
     '''waits for elements to appear'''
@@ -37,8 +38,8 @@ class ALC:
         self.driver.get("https://learningandwriting.ku.edu/individual-tutoring")
         self.wait(5,"ID","section342")
         #WebDriverWait(self.driver,5).until(EC.presence_of_all_elements_located((By.ID,"section342")))  
-        scheduleAppointmentButton=self.driver.find_element(By.ID,"section342") 
-        scheduleAppointmentButton.click() 
+        self.driver.find_element(By.ID,"section342").click()
+        #scheduleAppointmentButton.click() 
         
     '''logs into ALC tutoring'''
     def login(self): 
@@ -53,4 +54,9 @@ class ALC:
         _pass=self.driver.find_element(By.ID,"password")
         _pass.send_keys("EliXen!1"+Keys.ENTER)
         
-#make wait webdriver function 
+    '''DUO dont trust computer'''
+    def duo(self): 
+        self.wait(30,"ID","dont-trust-browser-button")
+        self.driver.find_element(By.ID,"dont-trust-browser-button").click()
+    
+    
