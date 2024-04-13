@@ -11,11 +11,12 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC 
 from selenium.webdriver.common.action_chains import ActionChains
 import time 
+import calendar
 
 from option import Option 
 
 class ALC: 
-    def __init__(self,helpClass,username,password): 
+    def __init__(self,helpClass=None,username=None,password=None): 
         self.optionsList=[] #dlist of tutoring times
         self.help=helpClass #must by tuple/list/dictionary of EECS,# string, format to be with space 
         self.driver=webdriver.Chrome() #ask for input of which browser, for now just chrome 
@@ -45,17 +46,11 @@ class ALC:
     def openALC(self): 
         self.driver.get("https://learningandwriting.ku.edu/individual-tutoring")
         self.wait(5,"ID","section342")
-        #WebDriverWait(self.driver,5).until(EC.presence_of_all_elements_located((By.ID,"section342")))  
         self.driver.find_element(By.ID,"section342").click()
         #scheduleAppointmentButton.click() 
         
     '''logs into ALC tutoring'''
     def login(self): 
-        #_username=input("KU username: ")
-        #_password=input("KU password: ")
-        #username.strip() 
-        #password.strip() 
-        #WebDriverWait(self.driver,5).until(EC.presence_of_all_elements_located((By.ID,"username")))  
         self.wait(5,"ID","username")
         _enterUser=self.driver.find_element(By.ID,"username")
         _enterUser.send_keys("e602m203")
@@ -89,8 +84,57 @@ class ALC:
                         time = appointment_info[1].split('</strong>')[0]
                         date = appointment_info[2].split('</strong>')[0]
                         person = appointment_info[3].split('</strong>')[0]
-            
-                        print(f"Time:{time}\tDate:{date}\tPerson:{person}")    
+                        weekdate=date.split(" ")
+                        month=self._month(weekdate[0])
+                        weekdayNum=calendar.weekday(2024,month, int(weekdate[1]))
+                        weekday=self._weekday(weekdayNum)
+                        option=Option(weekday,time,person,date)
+                        self.optionsList.append(option)
+                        print(f"Time:{time}\tDate:{date}\tPerson:{person}") 
+                        print(weekdate)
+                        print(weekday)
+    
+    def _month(self,month): 
+        if month=="January": 
+            return 1
+        elif month=="February": 
+            return 2 
+        elif month=="March": 
+            return 3 
+        elif month=="April": 
+            return 4
+        elif month=="May": 
+            return 5
+        elif month=="June": 
+            return 6
+        elif month=="July": 
+            return 7
+        elif month=="August": 
+            return 8
+        elif month=="September": 
+            return 9
+        elif month=="October": 
+            return 10
+        elif month=="November": 
+            return 11
+        elif month=="December": 
+            return 12
+    def _weekday(self,num): 
+        if num==0: 
+            return "Monday" 
+        elif num==1: 
+            return "Tuesday"
+        elif num==2: 
+            return "Wednesday" 
+        elif num==3: 
+            return "Thursday"
+        elif num==4: 
+            return "Friday"
+        elif num==5: 
+            return "Saturday" 
+        elif num==6: 
+            return "Sunday"
+        
     
     '''this actually clicks on the time slot to reserve the appointmnet'''
     '''called from executive only if any times match with the users schedule, let user select which appointment'''
@@ -98,4 +142,6 @@ class ALC:
         self.wait(10,"xpath",'//*[@aria-label="Open/Available Appointment Slot"]')
         openSlot = self.driver.find_element(By.CSS_SELECTOR, "td[aria-label='Open/Available Appointment Slot']") #goes into td and looks for aria label specified 
         ActionChains(self.driver).move_to_element(openSlot).click(openSlot).perform() #scrolls/moves to element and clicks it 
+        
+    def run(self): 
         
