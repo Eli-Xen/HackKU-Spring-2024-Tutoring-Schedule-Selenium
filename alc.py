@@ -82,7 +82,7 @@ class ALC:
         
     def findTimes(self):
         self.wait(7,"ID", "sch-table")
-        table=self.driver.find_element(By.ID, "sch-table")
+        '''table=self.driver.find_element(By.ID, "sch-table")
         self.ALCtimes=table.find_elements(By.TAG_NAME, "tr") #saves it to table 
         for i in self.ALCtimes:
             cols = i.find_elements(By.TAG_NAME, "td") #finds columns in the table
@@ -91,6 +91,23 @@ class ALC:
                     #print(self.driver.find_element(By.CSS_SELECTOR,"data-bs-original-title='Select to reserve <strong>2:00 pm</strong> on <strong>April 14</strong> with <strong>Annie</strong>.'").text)
                     element = j.find_element(By.CSS_SELECTOR, '[data-bs-original-title]')
                     tooltip_content = element.get_attribute('data-bs-original-title')
-                    print(tooltip_content)
+                    print(tooltip_content)'''
+        table = self.driver.find_element(By.ID, "sch-table")
+        ALCtimes = table.find_elements(By.TAG_NAME, "tr")
+        
+        for row in ALCtimes:
+            cols = row.find_elements(By.TAG_NAME, "td")
+            for col in cols:
+                tooltip_content = col.get_attribute('data-bs-original-title')
+                if tooltip_content:
+                    # Extracting the desired information from the tooltip content
+                    appointment_info = tooltip_content.split('<strong>')
+                    time = appointment_info[1].split('</strong>')[0]
+                    date = appointment_info[2].split('</strong>')[0]
+                    person = appointment_info[3].split('</strong>')[0]
+        
+                    print("Time:", time)
+                    print("Date:", date)
+                    print("Person:", person)
 
     

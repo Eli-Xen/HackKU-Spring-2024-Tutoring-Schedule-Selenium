@@ -1,8 +1,8 @@
 '''
-Author: Eliza Malyshev 
+Author: Lily Brooks-Kanost
 Date:4/13/2024 
 HackKU Spring 2024 Tutoring Porject; ALC Tutoring webscrapping 
-Purpose: directs and gets information from ALC website 
+Purpose: class instance of the tutoring time information
 ''' 
 
 class Option:
