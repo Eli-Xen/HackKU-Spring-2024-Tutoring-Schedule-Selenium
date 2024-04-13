@@ -1,6 +1,5 @@
 '''
 Author: Eliza Malyshev 
-KUID: 3122318
 Date:4/12/2024 
 HackKU Spring 2024 Tutoring Porject; ALC Tutoring webscrapping 
 Purpose: directs and gets information from ALC website 
@@ -18,6 +17,7 @@ class ALC:
         self.ALCtimes={} #dictionary f classes to keep day,
         self.driver=webdriver.Chrome() #ask for input of which browser, for now just chrome 
         self.openALC()
+        self.login()
 
         
     '''opens ALC website and clicks schedule an appointmnet button'''
@@ -28,4 +28,15 @@ class ALC:
         scheduleAppointmentButton.click() 
         time.sleep(30)
     
-    
+    def login(self): 
+        #_username=input("KU username: ")
+        #_password=input("KU password: ")
+        #username.strip() 
+        #password.strip() 
+        WebDriverWait(self.driver,5).until(EC.presence_of_all_elements_located((By.ID,"username")))  
+        _enterUser=self.driver.find_element(By.ID,"username")
+        _enterUser.send_keys("e602m203")
+        _pass=self.driver.find_element(By.ID,"password")
+        _pass.send_keys("EliXen!1"+Keys.ENTER)
+        
+#make wait webdriver function 
