@@ -1,6 +1,6 @@
 '''
 Author: Eliza Malyshev 
-Date:4/12/2024 
+Date:4/13/2024 
 HackKU Spring 2024 Tutoring Porject; ALC Tutoring webscrapping 
 Purpose: directs and gets information from ALC website 
 ''' 
@@ -12,17 +12,20 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 import time 
 
+from option import Option 
+
 class ALC: 
     def __init__(self,helpClass=None,studentSchedule=None): 
         self.studentSchedule={}
-        self.ALCtimes={} #dictionary f classes to keep day,
+        self.ALCtimes=[] #dlist of tutoring times
         self.help=helpClass #must by tuple/list/dictionary of EECS,# string, format to be with space 
         self.driver=webdriver.Chrome() #ask for input of which browser, for now just chrome 
         self.openALC()
         self.login()
         self.duo()
         #self.selectClass()
-        self.timeSlot()
+        #self.timeSlot()
+        self.findTimes()
         time.sleep(30)
 
     '''waits for elements to appear'''
@@ -71,11 +74,23 @@ class ALC:
         classInput=self.driver.find_element(By.ID,"limfoc") #instead of EECS 268 or whatever put self.help
         classInput.send_keys("EECS 168"+Keys.ENTER)
     
+    '''this actually clicks on the time slot, to reserve the appointmnet'''
     def timeSlot(self): 
         self.wait(10,"xpath",'//*[@aria-label="Open/Available Appointment Slot"]')
         openSlot = self.driver.find_element(By.CSS_SELECTOR, "td[aria-label='Open/Available Appointment Slot']") #goes into td and looks for aria label specified 
         ActionChains(self.driver).move_to_element(openSlot).click(openSlot).perform() #scrolls/moves to element and clicks it 
         
-        
-        
-        
+    def findTimes(self):
+        self.wait(7,"ID", "sch-table")
+        table=self.driver.find_element(By.ID, "sch-table")
+        self.ALCtimes=table.find_elements(By.TAG_NAME, "tr") #saves it to table 
+        for i in self.ALCtimes:
+            cols = i.find_elements(By.TAG_NAME, "td") #finds columns in the table
+            for j in cols: 
+                if self.driver.find_element(By.CSS_SELECTOR, "td[aria-label='Open/Available Appointment Slot']"): 
+                    #print(self.driver.find_element(By.CSS_SELECTOR,"data-bs-original-title='Select to reserve <strong>2:00 pm</strong> on <strong>April 14</strong> with <strong>Annie</strong>.'").text)
+                    element = j.find_element(By.CSS_SELECTOR, '[data-bs-original-title]')
+                    tooltip_content = element.get_attribute('data-bs-original-title')
+                    print(tooltip_content)
+
+    
