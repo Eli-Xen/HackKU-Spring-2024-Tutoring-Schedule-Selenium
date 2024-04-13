@@ -6,7 +6,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC 
 import time
 from option import Option
-from datetime import datetime
 
 class Schedule:
     def __init__(self, user_id, user_pass):
@@ -82,7 +81,7 @@ class Schedule:
             temp[0] = self.convert24(temp[0].strip())
             temp[1] = self.convert24(temp[1].strip())
             self.schedule_list[i].times = temp[0].strip() + " - " + temp[1].strip()
-            
+
             
     def convert24(self, time):
         #converts to military time so it's possible to compare schedules easier
