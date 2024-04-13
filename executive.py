@@ -81,8 +81,3 @@ class Executive:
                     print(f'Thursdays at {value[i][1]}')
                 if value[i][0] == 'F':
                     print(f'Fridays at {value[i][1]}')
-def main():
-    myExec = Executive()
-    myExec.run()
-
-main()
