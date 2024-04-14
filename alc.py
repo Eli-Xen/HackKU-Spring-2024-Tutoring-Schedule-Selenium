@@ -66,6 +66,7 @@ class ALC:
         classInput=self.driver.find_element(By.ID,"limfoc") #instead of EECS 268 or whatever put self.help
         classInput.send_keys(self.help+Keys.ENTER)
     
+    '''iterates through all takes on page, through all rows of each table, through each column of each row until it finds open tutroing appointmnets and saves them to optionsList as Option instance'''
     def findTimes(self):
         self.wait(7,"ID", "sch-table")
         allTables=self.driver.find_elements(By.ID,"sch-table")
@@ -90,7 +91,7 @@ class ALC:
                         weekday=self._weekday(weekdayNum)
                         option=Option(weekday,time,person,date)
                         self.optionsList.append(option)
-    
+    '''supporter function for findTimes; converts month to integer to use in calendar.weekday'''
     def _month(self,month): 
         if month=="January": 
             return 1
@@ -116,6 +117,7 @@ class ALC:
             return 11
         elif month=="December": 
             return 12
+    '''supporter function for findTimes; converts calendar.weekday output into weekday letter to use in Option class'''
     def _weekday(self,num): 
         if num==0: 
             return "M" 
@@ -161,9 +163,7 @@ class ALC:
     '''this actually clicks on the time slot to reserve the appointmnet'''
     '''called from executive only if any times match with the users schedule, let user select which appointment'''
     def timeSlot(self,time,date,person,instructor): 
-        print(time)
         time=self.convert12(time)
-        print(time)
         #iterates over every table and every row and col in table and tries to find matching tooltip content 
         self.wait(7,"ID", "sch-table")
         allTables=self.driver.find_elements(By.ID,"sch-table")
@@ -197,10 +197,38 @@ class ALC:
                             #switch frame by id
                             self.driver.switch_to.frame('dynamicIframe')
                             self.driver.find_element(By.ID, 'q2').send_keys(instructor) #send info to the text element 
-                            #self.driver.find_element(By.)
+                            checkbox_value=int(input(f"What what do you need help for in class {self.help}?\n1)Homework\n2)Exam\n3)Quiz\n4)Lab\n5)Lecture\n6)Project\nEnter single integer: "))-1
+                            WebDriverWait(self.driver, 45).until(EC.element_to_be_clickable((By.CSS_SELECTOR, f'input[value="{checkbox_value}"]'))).click()
+                            
+                            self.wait(30, "ID", "q9")
+                            work_details=input("What would you like to work on today? Please be as specific as possible with the kinds of topics you'd like to focus on to help your tutor prepare (e.g., derivatives, cell structure, newton's: ")
+                            self.driver.find_element(By.ID,"q9").send_keys(work_details)
+                                
+                            
+                            '''cannot click the last button, to be coming soon!'''
+                            #quiet_space=int(input("If it is available, would you like to work with your tutor in our low distraction/quiet room? \nEnter 0 for yes and 1 for no/not needed: "))
+                            
+                            #checkbox_value = str(quiet_space)
+                            #checkbox_xpath = f'//div[@id="q1"]/input[@type="checkbox" and @value="{checkbox_value}"]'
+                            # Wait for the checkbox to be clickable
+                            #checkbox = WebDriverWait(self.driver, 45).until(EC.element_to_be_clickable((By.XPATH, checkbox_xpath)))
+                            #self.driver.execute_script("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", checkbox)
+                            # Click the checkbox
+                            #checkbox.click()
+                            
+                            #checkbox = self.driver.find_element(By.CSS_SELECTOR,f'#q1 input[value="{quiet_space}"]')
+                            #ActionChains(self.driver).move_to_element(checkbox).click().perform() #scrolls/moves to element and clicks it
+                            
+                            #checkbox = WebDriverWait(self.driver, 30).until(EC.element_to_be_clickable((By.CSS_SELECTOR, f'#q1 input[value="{quiet_space}"]')))
+
+                            # Click the checkbox
+                            #checkbox.click()
+                            #WebDriverWait(self.driver, 30).until(EC.element_to_be_clickable((By.CSS_SELECTOR, f'#q1 input[value="{quiet_space}"]'))).click()                            
+                            
+                            self.driver.find_element(By.ID,"closeModalBtn").click()
                             time.sleep(10)
                         except TimeoutException:
-                            print("Timed out waiting for inputInstructor element to be clickable.")
+                            print("Timed out waiting for user to type ")
     
     '''supporter function for timeSlot to convert to non-military time'''
     def convert12(self, time):
@@ -218,7 +246,7 @@ class ALC:
         self.openALC() #opens website and clicks button 
         self.login(self.username, self.password) #login
         self.duo() #go through duo 
-        self.selectClass() #this will type class into drop down 
+        #self.selectClass() #this will type class into drop down 
         #self.nextWeek()
         time.sleep(5)
         self.findTimes() #this will find all avialable times in the week and put into optionsList as Option instance 
