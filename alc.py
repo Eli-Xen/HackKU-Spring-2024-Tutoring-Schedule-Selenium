@@ -214,10 +214,13 @@ class ALC:
         self.duo() #go through duo 
         #self.selectClass() #this will type class into drop down 
         #self.nextWeek()
+        self.time.sleep(5)
         self.findTimes() #this will find all avialable times in the week and put into optionsList as Option instance 
         self.timeSlot() #this will schedule an appointmnet, handled by executive and will be called there, this will be an optional call after every week
    
         for i in self.optionsList:
             i.times = self.convert24(i.times)
+        self.driver.close() 
+        self.time.sleep(5)
         return self.optionsList
         
