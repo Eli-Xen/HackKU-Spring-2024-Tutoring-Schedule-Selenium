@@ -83,9 +83,11 @@ class ALC:
                     if tooltip_content:
                         # Extracting the desired information from the tooltip content
                         appointment_info = tooltip_content.split('<strong>')
+                        #print(appointment_info)
                         time = appointment_info[1].split('</strong>')[0]
                         date = appointment_info[2].split('</strong>')[0]
                         person = appointment_info[3].split('</strong>')[0]
+                        
                         weekdate=date.split(" ")
                         month=self._month(weekdate[0])
                         weekdayNum=calendar.weekday(2024,month, int(weekdate[1]))
@@ -134,19 +136,71 @@ class ALC:
         elif num==6: 
             return "Sunday"
         
+    '''if executive finds there are no matching tutors between this and tutoring schedule it will open another instance and immidietley go to next week and scan that'''
+    def nextWeek(self): 
+        #here insert rerun of everything till adter duo 
+        self.wait(10,"link", "Next Week")
+        nextWeek=self.driver.find_element(By.PARTIAL_LINK_TEXT,"Next Week")
+        nextWeek.click() 
+        self.findTimes()
+        return self.optionsList
     
     '''this actually clicks on the time slot to reserve the appointmnet'''
     '''called from executive only if any times match with the users schedule, let user select which appointment'''
-    def timeSlot(self): 
-        self.wait(10,"xpath",'//*[@aria-label="Open/Available Appointment Slot"]')
-        openSlot = self.driver.find_element(By.CSS_SELECTOR, "td[aria-label='Open/Available Appointment Slot']") #goes into td and looks for aria label specified 
-        ActionChains(self.driver).move_to_element(openSlot).click(openSlot).perform() #scrolls/moves to element and clicks it 
+    def timeSlot(self,time="2:00 pm",date="April 14",person="Annie",instructor="John Gibbons"): 
+        #iterates over every table and every row and col in table and tries to find matching tooltip content 
+        self.wait(7,"ID", "sch-table")
+        allTables=self.driver.find_elements(By.ID,"sch-table")
+        for i in allTables: #get it to iterate over all 6 tables 
+            #table = self.driver.find_element(By.ID, "sch-table")
+            ALCtimes = i.find_elements(By.TAG_NAME, "tr")
+            for row in ALCtimes:
+                cols = row.find_elements(By.TAG_NAME, "td")
+                for col in cols:
+                    tooltip_content = col.get_attribute('data-bs-original-title')
+                    if tooltip_content: #if tooltip context exists 
+                        # Extracting the desired information from the tooltip content
+                        appointment_info = tooltip_content.split('<strong>')
+                        #print(appointment_info)
+                        tool_time = appointment_info[1].split('</strong>')[0]
+                        tool_date = appointment_info[2].split('</strong>')[0]
+                        tool_person = appointment_info[3].split('</strong>')[0]
+                    else: 
+                        tool_time = ''
+                        tool_date = ''
+                        tool_person = ''
+                    match=0
+                    if time==tool_time: 
+                      match+=1 
+                    if date==tool_date: 
+                        match+=1 
+                    if person==tool_person: 
+                        match+=1 
+                    if match==3: 
+                        print("match found")
+                        openSlot = self.driver.find_element(By.CSS_SELECTOR, "td[aria-label='Open/Available Appointment Slot']") #goes into td and looks for aria label specified 
+                        ActionChains(self.driver).move_to_element(openSlot).click(openSlot).perform() #scrolls/moves to element and clicks it'''
+                        '''works up till here'''
+                        #self.wait(3,"ID","q2") 
+                        inputInstructor=self.driver.find_element(By.ID,"q2")
+                        if inputInstructor.is_displayed():
+                            # If visible, try to interact with the element
+                            inputInstructor.send_keys(instructor+Keys.ENTER)
+                        else:
+                            print("Element is not visible.")
+                            ActionChains(self.driver).move_to_element(inputInstructor).click(inputInstructor).perform() #scrolls/moves to element and clicks it'''
+                            self.driver.execute_script("arguments[0].scrollIntoView(true);", inputInstructor)
+                            WebDriverWait(self.driver, 30).until(EC.element_to_be_clickable((By.ID, "q2"))).send_keys(instructor+Keys.ENTER)
+                            inputInstructor.send_keys(instructor+Keys.ENTER)
+                        return 
+        
         
     def run(self): 
         self.openALC() #opens website and clicks button 
         self.login() #login
         self.duo() #go through duo 
         #self.selectClass() #this will type class into drop down 
+        #self.nextWeek()
         self.findTimes() #this will find all avialable times in the week and put into optionsList as Option instance 
-        #make option in executive that if there are no matching times with student schedule them click next week link and run again 
-        #self.timeSlot() #this will schedule an appointmnet, handled by executive and will be called there 
+        self.timeSlot() #this will schedule an appointmnet, handled by executive and will be called there, this will be an optional call after every week
+        return self.optionsList
