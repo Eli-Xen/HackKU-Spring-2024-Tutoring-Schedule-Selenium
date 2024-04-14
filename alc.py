@@ -250,7 +250,7 @@ class ALC:
         #self.nextWeek()
         t.sleep(5)
         self.findTimes() #this will find all avialable times in the week and put into optionsList as Option instance 
-        self.timeSlot("13:00","April 15","Apoorva","John Gibbons") #this will schedule an appointmnet, handled by executive and will be called there, this will be an optional call after every week
+        #self.timeSlot("13:00","April 15","Apoorva","John Gibbons") #this will schedule an appointmnet, handled by executive and will be called there, this will be an optional call after every week
    
         for i in self.optionsList:
             i.times = self.convert24(i.times)
