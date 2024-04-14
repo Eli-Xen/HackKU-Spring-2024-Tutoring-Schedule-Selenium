@@ -13,9 +13,6 @@ from selenium.webdriver.common.action_chains import ActionChains
 import time 
 import calendar
 
-from selenium.common.exceptions import TimeoutException
-
-
 from option import Option 
 
 class ALC: 
@@ -25,8 +22,8 @@ class ALC:
         self.driver=webdriver.Chrome() #ask for input of which browser, for now just chrome 
         self.username=username 
         self.password=password
-        self.run()
-        time.sleep(30)
+        self.run()                  #### delete these l8r 
+        time.sleep(30)              #### delete these l8r 
 
     '''waits for elements to appear'''
     def wait(self,time,types,string): 
@@ -165,10 +162,12 @@ class ALC:
         #iterates over every table and every row and col in table and tries to find matching tooltip content 
         self.wait(7,"ID", "sch-table")
         allTables=self.driver.find_elements(By.ID,"sch-table")
-        for i in allTables: #get it to iterate over all 6 tables 
-            #table = self.driver.find_element(By.ID, "sch-table")
-            ALCtimes = i.find_elements(By.TAG_NAME, "tr")
-            for row in ALCtimes:
+        found=False
+        for table in allTables: #get it to iterate over all 6 tables 
+            if found: 
+                break
+            all_rows = table.find_elements(By.TAG_NAME, "tr")
+            for row in all_rows:
                 cols = row.find_elements(By.TAG_NAME, "td")
                 for col in cols:
                     tooltip_content = col.get_attribute('data-bs-original-title')
@@ -184,29 +183,12 @@ class ALC:
                         tool_time = ''
                         tool_date = ''
                         tool_person = ''
-                    #match=0
                     if time==tool_time and date==tool_date and person==tool_person: 
                         print("match found")
-                        openSlots = self.driver.find_elements(By.CSS_SELECTOR, "td[aria-label='Open/Available Appointment Slot']") #goes into td and looks for aria label specified 
-                        ActionChains(self.driver).move_to_element(openSlots).click(openSlots).perform() #scrolls/moves to element and clicks it'''
-
-                        '''for i in openSlots: #iterate over all open appointmnets 
-                            
-                        
-                      
-                        try:
-                            # Switch frame by id
-                            self.driver.switch_to.frame('dynamicIframe')
-                            
-                                # Now, Click on the button
-                            self.driver.find_element(By.ID, 'q2').send_keys(instructor)
-  
-                            self.time.sleep(10)
-                        except TimeoutException:
-                            print("Timed out waiting for inputInstructor element to be clickable.")'''
-                        self.time.sleep(10)
-                        return 
-        
+                        openSlot = row.find_element(By.CSS_SELECTOR, "td[aria-label='Open/Available Appointment Slot']") #goes into td and looks for aria label specified 
+                        ActionChains(self.driver).move_to_element(openSlot).click().perform() #scrolls/moves to element and clicks it
+                        break  #exit  loop once the right appointment is found 
+                    
         
     def run(self): 
         self.openALC() #opens website and clicks button 
@@ -214,13 +196,13 @@ class ALC:
         self.duo() #go through duo 
         #self.selectClass() #this will type class into drop down 
         #self.nextWeek()
-        self.time.sleep(5)
+        time.sleep(5)
         self.findTimes() #this will find all avialable times in the week and put into optionsList as Option instance 
         self.timeSlot() #this will schedule an appointmnet, handled by executive and will be called there, this will be an optional call after every week
    
         for i in self.optionsList:
             i.times = self.convert24(i.times)
-        self.driver.close() 
-        self.time.sleep(5)
+        #self.driver.close() 
+        time.sleep(5)
         return self.optionsList
         
