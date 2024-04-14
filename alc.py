@@ -10,6 +10,8 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait 
 from selenium.webdriver.support import expected_conditions as EC 
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.common.exceptions import TimeoutException
+
 import time 
 import calendar
 
@@ -158,7 +160,10 @@ class ALC:
     
     '''this actually clicks on the time slot to reserve the appointmnet'''
     '''called from executive only if any times match with the users schedule, let user select which appointment'''
-    def timeSlot(self,time="1:00 pm",date="April 15",person="Apoorva",instructor="John Gibbons"): 
+    def timeSlot(self,time,date,person,instructor): 
+        print(time)
+        time=self.convert12(time)
+        print(time)
         #iterates over every table and every row and col in table and tries to find matching tooltip content 
         self.wait(7,"ID", "sch-table")
         allTables=self.driver.find_elements(By.ID,"sch-table")
@@ -187,27 +192,17 @@ class ALC:
                         print("match found")
                         openSlot = row.find_element(By.CSS_SELECTOR, "td[aria-label='Open/Available Appointment Slot']") #goes into td and looks for aria label specified 
                         ActionChains(self.driver).move_to_element(openSlot).click().perform() #scrolls/moves to element and clicks it
-                        break  #exit  loop once the right appointment is found 
-                    
-        
-    def run(self): 
-        self.openALC() #opens website and clicks button 
-        self.login(self.username, self.password) #login
-        self.duo() #go through duo 
-        #self.selectClass() #this will type class into drop down 
-        #self.nextWeek()
-        time.sleep(5)
-        self.findTimes() #this will find all avialable times in the week and put into optionsList as Option instance 
-        self.timeSlot() #this will schedule an appointmnet, handled by executive and will be called there, this will be an optional call after every week
-   
-        for i in self.optionsList:
-            i.times = self.convert24(i.times)
-        #self.driver.close() 
-        time.sleep(5)
-        return self.optionsList
+                        found=True #ends loop for searching matching appointment 
+                        try:
+                            #switch frame by id
+                            self.driver.switch_to.frame('dynamicIframe')
+                            self.driver.find_element(By.ID, 'q2').send_keys(instructor) #send info to the text element 
+                            time.sleep(10)
+                        except TimeoutException:
+                            print("Timed out waiting for inputInstructor element to be clickable.")
     
+    '''supporter function for timeSlot to convert to non-military time'''
     def convert12(self, time):
-        #converts to non-military time
         temp = int(time[0:time.find(":")])
         if temp < 12:
              time = str(temp) +  time[time.find(":"):] + " am"
@@ -216,5 +211,21 @@ class ALC:
                  temp -= 12 
             time = str(temp) +  time[time.find(":"):] + " pm"
         return time
-
-
+    
+    '''runs all functions and returns list of aviaable tutoring'''
+    def run(self): 
+        self.openALC() #opens website and clicks button 
+        self.login(self.username, self.password) #login
+        self.duo() #go through duo 
+        #self.selectClass() #this will type class into drop down 
+        #self.nextWeek()
+        time.sleep(5)
+        self.findTimes() #this will find all avialable times in the week and put into optionsList as Option instance 
+        self.timeSlot("13:00","April 15","Apoorva","John Gibbons") #this will schedule an appointmnet, handled by executive and will be called there, this will be an optional call after every week
+   
+        for i in self.optionsList:
+            i.times = self.convert24(i.times)
+        #self.driver.close() 
+        time.sleep(5)
+        return self.optionsList
+    
