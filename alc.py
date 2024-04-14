@@ -23,12 +23,6 @@ class ALC:
         self.optionsList=[] #dlist of tutoring times
         self.help=helpClass #must by tuple/list/dictionary of EECS,# string, format to be with space 
         self.driver=webdriver.Chrome() #ask for input of which browser, for now just chrome 
-        #self.openALC()
-        #self.login()
-        #self.duo()
-        #self.selectClass()
-        #self.timeSlot()
-        #self.findTimes()
         self.run()
         time.sleep(30)
 
@@ -168,23 +162,21 @@ class ALC:
                         tool_time = appointment_info[1].split('</strong>')[0]
                         tool_date = appointment_info[2].split('</strong>')[0]
                         tool_person = appointment_info[3].split('</strong>')[0]
+                        print(f'{tool_time}, {tool_date}, {tool_person}')
                     else: 
                         tool_time = ''
                         tool_date = ''
                         tool_person = ''
-                    match=0
-                    if time==tool_time: 
-                      match+=1 
-                    if date==tool_date: 
-                        match+=1 
-                    if person==tool_person: 
-                        match+=1 
-                    if match==3: 
-                        openSlot = self.driver.find_element(By.CSS_SELECTOR, "td[aria-label='Open/Available Appointment Slot']") #goes into td and looks for aria label specified 
-                        ActionChains(self.driver).move_to_element(openSlot).click(openSlot).perform() #scrolls/moves to element and clicks it'''
-                        '''works up till here'''
+                    #match=0
+                    if time==tool_time and date==tool_date and person==tool_person: 
+                        print("match found")
+                        openSlots = self.driver.find_elements(By.CSS_SELECTOR, "td[aria-label='Open/Available Appointment Slot']") #goes into td and looks for aria label specified 
+                        ActionChains(self.driver).move_to_element(openSlots).click(openSlots).perform() #scrolls/moves to element and clicks it'''
+
+                        #for i in openSlots: #iterate over all open appointmnets 
+                            
                         
-                        
+                      
                         try:
                             # Switch frame by id
                             self.driver.switch_to.frame('dynamicIframe')
