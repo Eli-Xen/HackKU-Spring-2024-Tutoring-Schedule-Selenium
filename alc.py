@@ -183,13 +183,13 @@ class ALC:
                         tool_time = appointment_info[1].split('</strong>')[0]
                         tool_date = appointment_info[2].split('</strong>')[0]
                         tool_person = appointment_info[3].split('</strong>')[0]
-                        print(f'{tool_time}, {tool_date}, {tool_person}')
+                        #print(f'{tool_time}, {tool_date}, {tool_person}')
                     else: 
                         tool_time = ''
                         tool_date = ''
                         tool_person = ''
                     if time==tool_time and date==tool_date and person==tool_person: 
-                        print("match found")
+                        #print("match found")
                         openSlot = row.find_element(By.CSS_SELECTOR, "td[aria-label='Open/Available Appointment Slot']") #goes into td and looks for aria label specified 
                         ActionChains(self.driver).move_to_element(openSlot).click().perform() #scrolls/moves to element and clicks it
                         found=True #ends loop for searching matching appointment 
