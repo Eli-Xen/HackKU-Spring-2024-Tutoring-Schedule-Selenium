@@ -205,4 +205,16 @@ class ALC:
         #self.driver.close() 
         time.sleep(5)
         return self.optionsList
-        
+    
+    def convert12(self, time):
+        #converts to non-military time
+        temp = int(time[0:time.find(":")])
+        if temp < 12:
+             time = str(temp) +  time[time.find(":"):] + " am"
+        else:
+            if temp > 12:
+                 temp -= 12 
+            time = str(temp) +  time[time.find(":"):] + " pm"
+        return time
+
+
