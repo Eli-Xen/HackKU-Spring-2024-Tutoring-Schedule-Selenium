@@ -24,7 +24,8 @@ class ALC:
         self.driver=webdriver.Chrome() #ask for input of which browser, for now just chrome 
         self.username=username 
         self.password=password
-
+        #self.run()                  #### delete these l8r 
+        #time.sleep(30)              #### delete these l8r 
 
     '''waits for elements to appear'''
     def wait(self,time,types,string): 
@@ -254,10 +255,9 @@ class ALC:
             i.times = self.convert24(i.times)
         answer = input("Would you like to schedule an ALC appointment: y/n: ")
         if answer== "y":
-            self.timeSlot(#parameters)
+            self.timeSlot("12:00","April 19","Kate","Professor")
+            print("Appointmnet Scheduled: Friday, April 19th, 12:00, Kate")
         else:
              pass
         self.driver.close() 
         t.sleep(5)
-        #return self.optionsList
-    
