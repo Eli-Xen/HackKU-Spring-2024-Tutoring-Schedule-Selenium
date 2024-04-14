@@ -226,7 +226,7 @@ class ALC:
    
         for i in self.optionsList:
             i.times = self.convert24(i.times)
-        #self.driver.close() 
+        self.driver.close() 
         time.sleep(5)
-        return self.optionsList
+        #return self.optionsList
     
