@@ -24,8 +24,7 @@ class ALC:
         self.driver=webdriver.Chrome() #ask for input of which browser, for now just chrome 
         self.username=username 
         self.password=password
-        #self.run()                  #### delete these l8r 
-        #time.sleep(30)              #### delete these l8r 
+
 
     '''waits for elements to appear'''
     def wait(self,time,types,string): 
@@ -246,14 +245,18 @@ class ALC:
         self.openALC() #opens website and clicks button 
         self.login(self.username, self.password) #login
         self.duo() #go through duo 
-        #self.selectClass() #this will type class into drop down 
+        self.selectClass() #this will type class into drop down 
         #self.nextWeek()
         t.sleep(5)
         self.findTimes() #this will find all avialable times in the week and put into optionsList as Option instance 
-        #self.timeSlot("13:00","April 15","Apoorva","John Gibbons") #this will schedule an appointmnet, handled by executive and will be called there, this will be an optional call after every week
-   
+        #this will schedule an appointmnet, handled by executive and will be called there, this will be an optional call after every week
         for i in self.optionsList:
             i.times = self.convert24(i.times)
+        answer = input("Would you like to schedule an ALC appointment: y/n: ")
+        if answer== "y":
+            self.timeSlot(#parameters)
+        else:
+             pass
         self.driver.close() 
         t.sleep(5)
         #return self.optionsList
