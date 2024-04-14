@@ -22,9 +22,11 @@ class ALC:
     def __init__(self,helpClass=None,username=None,password=None): 
         self.optionsList=[] #dlist of tutoring times
         self.help=helpClass #must by tuple/list/dictionary of EECS,# string, format to be with space 
-        self.driver=webdriver.Chrome() #ask for input of which browser, for now just chrome 
-        self.run()
-        time.sleep(30)
+        self.driver=webdriver.Firefox() #ask for input of which browser, for now just chrome 
+        self.username = username
+        self.password = password
+        #self.run()
+        #time.sleep(30)
 
     '''waits for elements to appear'''
     def wait(self,time,types,string): 
@@ -50,11 +52,9 @@ class ALC:
     def login(self,username=None,password=None): 
         self.wait(5,"ID","username")
         _enterUser=self.driver.find_element(By.ID,"username")
-        _enterUser.send_keys("e602m203")
-        #_enterUser.send_keys(username)
+        _enterUser.send_keys(username)
         _pass=self.driver.find_element(By.ID,"password")
-        _pass.send_keys("EliXen!1"+Keys.ENTER)
-        #_pass.send_keys(password+Keys.ENTER)
+        _pass.send_keys(password+Keys.ENTER)
         
     '''clicks "dont trust computer" button on DUO to avoid security issues'''
     def duo(self): 
@@ -132,23 +132,6 @@ class ALC:
             return "Saturday" 
         elif num==6: 
             return "Sunday"
-    
-    '''converts all option instances to have milatary time so we can compare with ints in executive'''
-    def convert24(self, time):
-        #converts to military time bc it's easier to do time comparison like that
-        #if AM, do nothing
-        if time[-2].upper() == "A":
-            #doesn't bother w modifying 12 am, because no-one has classes then!
-            pass
-        else:
-            temp = time[0:time.find(":")]
-            temp = int(temp)
-            if temp == 12:
-                pass
-            else:
-                temp += 12
-                time = str(temp) + time[time.find(":"):-1]
-        return time[0:-2]
         
     '''if executive finds there are no matching tutors between this and tutoring schedule it will open another instance and immidietley go to next week and scan that'''
     def nextWeek(self): 
@@ -179,21 +162,23 @@ class ALC:
                         tool_time = appointment_info[1].split('</strong>')[0]
                         tool_date = appointment_info[2].split('</strong>')[0]
                         tool_person = appointment_info[3].split('</strong>')[0]
-                        print(f'{tool_time}, {tool_date}, {tool_person}')
                     else: 
                         tool_time = ''
                         tool_date = ''
                         tool_person = ''
-                    #match=0
-                    if time==tool_time and date==tool_date and person==tool_person: 
-                        print("match found")
-                        openSlots = self.driver.find_elements(By.CSS_SELECTOR, "td[aria-label='Open/Available Appointment Slot']") #goes into td and looks for aria label specified 
-                        ActionChains(self.driver).move_to_element(openSlots).click(openSlots).perform() #scrolls/moves to element and clicks it'''
-
-                        for i in openSlots: #iterate over all open appointmnets 
-                            
+                    match=0
+                    if time==tool_time: 
+                      match+=1 
+                    if date==tool_date: 
+                        match+=1 
+                    if person==tool_person: 
+                        match+=1 
+                    if match==3: 
+                        openSlot = self.driver.find_element(By.CSS_SELECTOR, "td[aria-label='Open/Available Appointment Slot']") #goes into td and looks for aria label specified 
+                        ActionChains(self.driver).move_to_element(openSlot).click(openSlot).perform() #scrolls/moves to element and clicks it'''
+                        '''works up till here'''
                         
-                      
+                        
                         try:
                             # Switch frame by id
                             self.driver.switch_to.frame('dynamicIframe')
@@ -210,17 +195,16 @@ class ALC:
         
     def run(self): 
         self.openALC() #opens website and clicks button 
-        self.login() #login
+        self.login(self.username, self.password) #login
         self.duo() #go through duo 
-        #self.selectClass() #this will type class into drop down 
+        self.selectClass() #this will type class into drop down 
         #self.nextWeek()
         self.findTimes() #this will find all avialable times in the week and put into optionsList as Option instance 
-        self.timeSlot() #this will schedule an appointmnet, handled by executive and will be called there, this will be an optional call after every week
-   
+        #self.timeSlot() #this will schedule an appointmnet, handled by executive and will be called there, this will be an optional call after every week
         for i in self.optionsList:
             i.times = self.convert24(i.times)
-        return self.optionsList
-        
+        time.sleep(5)
+    
     def convert24(self, time):
         #converts to military time bc it's easier to do time comparison like that
         #if AM, do nothing
@@ -236,4 +220,6 @@ class ALC:
                 temp += 12
                 time = str(temp) + time[time.find(":"):-1]
         return time[0:-2]
-        
+    
+#myALC = ALC(helpClass="EECS 268")
+#myALC.run()
