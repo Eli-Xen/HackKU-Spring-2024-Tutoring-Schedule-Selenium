@@ -59,7 +59,10 @@ class Executive:
                 self.alc_dict[i] = self.comparison(mySchedule.schedule_list, myALC.optionsList)   
         #prints ACM and ALC outputs 
         self.table_maker("ACM", self.acm_dict)
-        self.table_maker("ALC", self.alc_dict)  
+        self.table_maker("ALC", self.alc_dict)
+        answer = ""
+        while answer.lower() != "quit":
+            answer = input("Type 'quit' to quit Tutoring_Owl: ")
 
     def comparison(self, schedule_list, tutoring_list):
         #returns a list with all valid times
