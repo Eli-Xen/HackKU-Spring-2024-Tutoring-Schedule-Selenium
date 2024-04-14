@@ -3,7 +3,7 @@
 **What is TUTORING_OWL?**
 
 TUTORING_OWL takes in a KU student's desired tutoring, and outputs all tutoring sessions that don't conflict with their schedule of classes.  
-TUTORING_OWL is built using Python, specifically the Selenium module for web scraping, and uses Firefox browser.  
+TUTORING_OWL is built using Python, specifically the Selenium module for web scraping, and uses Firefox/Chrome browser.  
 In the future, we hope to add a more aesthetic UI and allow the user to choose different browsers.  
 We also hope to make it more secure, since it does require the user inputting their KU username/password.
 
