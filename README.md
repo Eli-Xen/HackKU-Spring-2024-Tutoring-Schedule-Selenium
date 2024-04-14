@@ -14,8 +14,8 @@ Run TUTORING_OWL either by downloading/running the .exe file, or by downloading 
 **Contributors**
 
 Lillian Brooks-Kanost, KU Computer Science '27  
-_Executive/ACM/Schedule.py, convert24/convert12 functions, created .exe file_
-Eliza Malyshev, KU Computer Science '27
+_Executive/ACM/Schedule.py, convert24/convert12 functions, created .exe file_  
+Eliza Malyshev, KU Computer Science '27  
 _ALC.py, login/duo functions_
   
 
