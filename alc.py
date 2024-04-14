@@ -24,8 +24,8 @@ class ALC:
         self.driver=webdriver.Chrome() #ask for input of which browser, for now just chrome 
         self.username=username 
         self.password=password
-        self.run()                  #### delete these l8r 
-        time.sleep(30)              #### delete these l8r 
+        #self.run()                  #### delete these l8r 
+        #time.sleep(30)              #### delete these l8r 
 
     '''waits for elements to appear'''
     def wait(self,time,types,string): 
@@ -197,6 +197,7 @@ class ALC:
                             #switch frame by id
                             self.driver.switch_to.frame('dynamicIframe')
                             self.driver.find_element(By.ID, 'q2').send_keys(instructor) #send info to the text element 
+                            #self.driver.find_element(By.)
                             time.sleep(10)
                         except TimeoutException:
                             print("Timed out waiting for inputInstructor element to be clickable.")
@@ -217,7 +218,7 @@ class ALC:
         self.openALC() #opens website and clicks button 
         self.login(self.username, self.password) #login
         self.duo() #go through duo 
-        #self.selectClass() #this will type class into drop down 
+        self.selectClass() #this will type class into drop down 
         #self.nextWeek()
         time.sleep(5)
         self.findTimes() #this will find all avialable times in the week and put into optionsList as Option instance 
