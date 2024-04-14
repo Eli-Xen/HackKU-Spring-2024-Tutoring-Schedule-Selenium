@@ -1,5 +1,7 @@
 from schedule import Schedule
 from acm import ACM
+from tabulate import tabulate
+
 class Executive:
     def __init__(self):
         self.classes_list = []
@@ -9,6 +11,7 @@ class Executive:
     def password_manager(self):
         i = 0
         try:
+            #if you've already used this, you'll have a passwords file already
             with open("tutoring_passwords.txt", "r") as file:
                 for line in file:
                     i += 1
@@ -17,6 +20,7 @@ class Executive:
                     else:
                         self.user_pass = line.strip()                 
         except:
+            #otherwise, it'll make you a passwwords file
             self.user_id = input("Txt file doesn't exist. Please input your KU username: ")
             self.user_pass = input("Please input your KU password: ")
             with open("tutoring_passwords.txt", "w") as file:
@@ -25,10 +29,13 @@ class Executive:
 
     def run(self):
         self.password_manager()
+        #gets your classes
         temp = input("What classes do you need tutoring for?\nInput in format EECS 140,EECS 268,PHXS 212 starting with highest priority: ")
         self.classes_list = temp.split(",")
+        #gets your schedule
         mySchedule = Schedule(self.user_id, self.user_pass)
         mySchedule.run()
+        #runs each class through ACM tutoring site and ALC
         for i in self.classes_list:
             try:
                 myACM = ACM(i)
@@ -36,9 +43,10 @@ class Executive:
                 self.acm_dict[i] = self.comparison(mySchedule.schedule_list, myACM.options_list)
             except:
                 myACM.close()
-                print(f"ACM Tutoring doesn't offer tutoring for {i} :(") 
-        #run alc for each class
-        self.pretty_print()   
+                print(f"ACM Tutoring doesn't offer tutoring for {i} :(")
+        #prints cutely
+        self.table_maker("ACM", self.acm_dict)
+        self.table_maker("ALC", self.alc_dict)  
 
     def comparison(self, schedule_list, tutoring_list):
         #returns a list with all valid times
@@ -66,18 +74,32 @@ class Executive:
         #if time was never marked invalid, add it to the list
         return valid_list
 
-    def pretty_print(self):
-        print("Dates/times for ACM Tutoring (held in LEEP2 1328):")
-        for key, value in self.acm_dict.items():
-            print(f'For {key}:')
-            for i in range(0, len(value)):
-                if value[i][0] == 'M':
-                    print(f'Mondays at {value[i][1]}')
-                if value[i][0] == 'T':
-                    print(f'Tuesdays at {value[i][1]}')
-                if value[i][0] == 'W':
-                    print(f'Wednesdays at {value[i][1]}')
-                if value[i][0] == 'R':
-                    print(f'Thursdays at {value[i][1]}')
-                if value[i][0] == 'F':
-                    print(f'Fridays at {value[i][1]}')
+    def table_maker(self, tutoring_type, dict_type):
+        l_row = [tutoring_type]
+        m_row = ["Monday"]
+        t_row = ["Tuesday"]
+        w_row = ["Wednesday"]
+        r_row = ["Thursday"]
+        f_row = ["Friday"]
+        table = [l_row, m_row, t_row, w_row, r_row, f_row]
+        for key in dict_type.keys():
+            l_row.append(key)
+            for item in dict_type[key]:
+                if item[0] == "M":
+                    m_row.append(item[1])
+                if item[0] == "T":
+                    t_row.append(item[1])
+                if item[0] == "W":
+                    w_row.append(item[1])
+                if item[0] == "R":
+                    r_row.append(item[1])
+                if item[0] == "F":
+                    f_row.append(item[1])
+            res = max(table, key = len)
+            for i in table:
+                if i == res:
+                    pass
+                else:
+                    while len(i) != len(res):
+                        i.append(" ")
+        print(tabulate(table, tablefmt="rounded_grid"))

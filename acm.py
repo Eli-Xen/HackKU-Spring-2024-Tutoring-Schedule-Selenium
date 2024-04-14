@@ -24,8 +24,6 @@ class ACM:
         self.driver.find_element(By.ID, "classSelect").click()
         select = Select(self.driver.find_element(By.ID, "classSelect"))
         #selects the user inputted class in the dropdown menu
-        #note- dropdown menu contains items like "PHSX 110/111". code won't work
-        #for that
         try:
             select.select_by_visible_text(self.help_class)
         except:
@@ -58,7 +56,10 @@ class ACM:
         return self.options_list
 
     def convert24(self, time):
+        #converts to military time bc it's easier to do time comparison like that
+        #if AM, do nothing
         if time[-2].upper() == "A":
+            #doesn't bother w modifying 12 am, because no-one has classes then!
             pass
         else:
             temp = time[0:time.find(":")]

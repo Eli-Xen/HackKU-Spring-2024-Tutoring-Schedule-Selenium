@@ -40,7 +40,6 @@ class Schedule:
         login_link.click()
         #make this so that if the file exists, it reads the file
         #else, it asks the user for input and then creates a pass_file so they don't have to multiple times
-        #this shouldgo in executive
         id_form = self.driver.find_element(By.ID, "username")
         id_form.send_keys(self.user_id)
         pass_form = self.driver.find_element(By.ID, "password")
