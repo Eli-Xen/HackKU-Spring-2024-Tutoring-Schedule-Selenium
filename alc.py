@@ -12,7 +12,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import TimeoutException
 
-import time 
+import time as t
 import calendar
 
 from option import Option 
@@ -226,7 +226,7 @@ class ALC:
                             #WebDriverWait(self.driver, 30).until(EC.element_to_be_clickable((By.CSS_SELECTOR, f'#q1 input[value="{quiet_space}"]'))).click()                            
                             
                             self.driver.find_element(By.ID,"closeModalBtn").click()
-                            time.sleep(10)
+                            t.sleep(10)
                         except TimeoutException:
                             print("Timed out waiting for user to type ")
     
@@ -248,13 +248,13 @@ class ALC:
         self.duo() #go through duo 
         #self.selectClass() #this will type class into drop down 
         #self.nextWeek()
-        time.sleep(5)
+        t.sleep(5)
         self.findTimes() #this will find all avialable times in the week and put into optionsList as Option instance 
         self.timeSlot("13:00","April 15","Apoorva","John Gibbons") #this will schedule an appointmnet, handled by executive and will be called there, this will be an optional call after every week
    
         for i in self.optionsList:
             i.times = self.convert24(i.times)
         self.driver.close() 
-        time.sleep(5)
+        t.sleep(5)
         #return self.optionsList
     
