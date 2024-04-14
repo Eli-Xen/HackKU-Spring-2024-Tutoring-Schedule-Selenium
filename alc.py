@@ -13,6 +13,9 @@ from selenium.webdriver.common.action_chains import ActionChains
 import time 
 import calendar
 
+from selenium.common.exceptions import TimeoutException
+
+
 from option import Option 
 
 class ALC: 
@@ -122,15 +125,15 @@ class ALC:
             return 12
     def _weekday(self,num): 
         if num==0: 
-            return "Monday" 
+            return "M" 
         elif num==1: 
-            return "Tuesday"
+            return "T"
         elif num==2: 
-            return "Wednesday" 
+            return "W" 
         elif num==3: 
-            return "Thursday"
+            return "R"
         elif num==4: 
-            return "Friday"
+            return "F"
         elif num==5: 
             return "Saturday" 
         elif num==6: 
@@ -147,7 +150,7 @@ class ALC:
     
     '''this actually clicks on the time slot to reserve the appointmnet'''
     '''called from executive only if any times match with the users schedule, let user select which appointment'''
-    def timeSlot(self,time="2:00 pm",date="April 14",person="Annie",instructor="John Gibbons"): 
+    def timeSlot(self,time="1:00 pm",date="April 15",person="Apoorva",instructor="John Gibbons"): 
         #iterates over every table and every row and col in table and tries to find matching tooltip content 
         self.wait(7,"ID", "sch-table")
         allTables=self.driver.find_elements(By.ID,"sch-table")
@@ -177,21 +180,22 @@ class ALC:
                     if person==tool_person: 
                         match+=1 
                     if match==3: 
-                        print("match found")
                         openSlot = self.driver.find_element(By.CSS_SELECTOR, "td[aria-label='Open/Available Appointment Slot']") #goes into td and looks for aria label specified 
                         ActionChains(self.driver).move_to_element(openSlot).click(openSlot).perform() #scrolls/moves to element and clicks it'''
                         '''works up till here'''
-                        #self.wait(3,"ID","q2") 
-                        inputInstructor=self.driver.find_element(By.ID,"q2")
-                        if inputInstructor.is_displayed():
-                            # If visible, try to interact with the element
-                            inputInstructor.send_keys(instructor+Keys.ENTER)
-                        else:
-                            print("Element is not visible.")
-                            ActionChains(self.driver).move_to_element(inputInstructor).click(inputInstructor).perform() #scrolls/moves to element and clicks it'''
-                            self.driver.execute_script("arguments[0].scrollIntoView(true);", inputInstructor)
-                            WebDriverWait(self.driver, 30).until(EC.element_to_be_clickable((By.ID, "q2"))).send_keys(instructor+Keys.ENTER)
-                            inputInstructor.send_keys(instructor+Keys.ENTER)
+                        
+                        
+                        try:
+                            # Switch frame by id
+                            self.driver.switch_to.frame('dynamicIframe')
+                            
+                                # Now, Click on the button
+                            self.driver.find_element(By.ID, 'q2').send_keys(instructor)
+  
+                            self.time.sleep(10)
+                        except TimeoutException:
+                            print("Timed out waiting for inputInstructor element to be clickable.")
+                            self.time.sleep(10)
                         return 
         
         
