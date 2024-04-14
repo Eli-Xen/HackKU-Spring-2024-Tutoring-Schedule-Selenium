@@ -17,9 +17,8 @@ class Schedule:
         
 
     def set_up(self):
-        #makes a chrome webdriver
+        #makes a Firefox webdriver and looks up the KU Portal website
         self.driver = webdriver.Firefox()
-        #looks up website
         self.driver.get("https://my.ku.edu/uPortal/f/welcome/normal/render.uP")
 
     def wait(self,time,types,string): 
@@ -36,21 +35,20 @@ class Schedule:
         WebDriverWait(self.driver,time).until(EC.presence_of_all_elements_located((types,string)))
 
     def search_in_site(self):
+        #Logs in to the KU portal using username and password
         login_link = self.driver.find_element(By.ID, "portalCASLoginLink")
         login_link.click()
-        #make this so that if the file exists, it reads the file
-        #else, it asks the user for input and then creates a pass_file so they don't have to multiple times
         id_form = self.driver.find_element(By.ID, "username")
         id_form.send_keys(self.user_id)
         pass_form = self.driver.find_element(By.ID, "password")
         pass_form.send_keys(self.user_pass + Keys.ENTER)
         self.wait(30,"ID","dont-trust-browser-button")
         self.driver.find_element(By.ID,"dont-trust-browser-button").click()
-        #wait for website to load...
+        #waits for website to load... and clicks on the Schedule button
         time.sleep(5)
         self.driver.find_element(By.ID, "u23l1n230").click()
         time.sleep(10)
-        #need to reload page if it doesnt load
+        #need to reload page if the schedule doesnt load
         loaded = 0
         while loaded != 1:
             try:
@@ -59,11 +57,12 @@ class Schedule:
             except:
                 self.driver.refresh()
                 time.sleep(10)
+        #makes a list from the elements in the table
         self.table_list = table.find_elements(By.TAG_NAME, "tr")
 
 
     def process_data(self):
-        #skips 0 because it's titling
+        #skips i[0] because it's titling
         for i in range(1, len(self.table_list)):
             #finds columns in the table
             cols = self.table_list[i].find_elements(By.TAG_NAME, "td")
@@ -71,9 +70,11 @@ class Schedule:
             cols[4] = cols[4].text.split(",")
             for j in range(0, len(cols[4])):
                 self.schedule_list.append(Option(cols[4][j].strip(), cols[2].text))
+        #if classes don't have set times, they get kicked out
         for i in range(len(self.schedule_list)-1, -1, -1):
             if self.schedule_list[i].weekday == "":
                 self.schedule_list.pop(i) 
+        #Converts the times into military time
         for i in range(len(self.schedule_list)):
             temp = self.schedule_list[i].times
             temp = temp.split("-")
@@ -83,7 +84,7 @@ class Schedule:
 
             
     def convert24(self, time):
-        #converts to military time so it's possible to compare schedules easier
+        #converts to military time so it's easier to compare schedules mathmatically
         if time[-2].upper() == "A":
             pass
         else:
@@ -98,9 +99,11 @@ class Schedule:
 
     def close(self):
         self.driver.close()
+        #the sleep avoids a WinError
         time.sleep(1)
 
     def run(self):
+        #does everything!
         self.set_up()
         self.search_in_site()
         self.process_data()
