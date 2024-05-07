@@ -18,7 +18,7 @@ import calendar
 from option import Option 
 
 class ALC: 
-    def __init__(self,helpClass=None,username="e602m203",password="EliXen!1"): 
+    def __init__(self,helpClass=None,username="username",password="password"): 
         self.optionsList=[] #dlist of tutoring times
         self.help=helpClass #must by tuple/list/dictionary of EECS,# string, format to be with space 
         self.driver=webdriver.Chrome() #ask for input of which browser, for now just chrome 
